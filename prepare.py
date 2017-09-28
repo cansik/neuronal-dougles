@@ -1,13 +1,16 @@
 
 from tinydb import TinyDB, Query
-from nltk.corpus import cmudict
-import pandas as pd
 import csv
+from prepare.SyllableAnalyser import SyllableAnalyser
 
 DB_NAME = 'words.json'
 DICTIONARY_NAME = 'data/dictionary.csv'
 
-cmu = cmudict.dict()
+syllablesTable = dict()
+wordTable = dict()
+dataTable = dict()
+
+syllableAnalyser = SyllableAnalyser()
 
 def analyseDictionary():
 	with open(DICTIONARY_NAME) as f:
@@ -22,43 +25,24 @@ def analyseRow(row):
 	word = row[0]
 	wordType = row[1]
 	description = row[2]
-	syllables = map(lambda x: str(x), nsyl(word))
+	syllables = syllableAnalyser.nsyl(word)
 
 	# guard if no syllables are found		
 	if(len(syllables) == 0):
 		return
 
+	# todo: analyse description
+
+
+	# write information to tables
+
 	print('%s => %s' % (word, '-'.join(syllables)))
-
-def nsyl(word):
-	try:
-		lutes = cmu[word.lower()][0]
-
-		if(len(lutes) != len(word)):
-			return []
-
-		indices = [i for i, l in enumerate(lutes) if l[-1].isdigit()]
-		return splitAt(word, indices)
-  	except KeyError:
-  		return []
-
-def splitAt(string, indices):
-	parts = []
-	counter = 0
-
-	for index in indices:
-		i = index + counter + 1
-		token, string = (string[:i]).strip(),(string[i:]).strip()
-		counter += index
-		parts.append(token.lower())
-
-	parts.append(string)
-	return filter(None, parts)
 
 def main():
 	print('building word index...')
 
 	db = TinyDB(DB_NAME)
+	db.purge()
 
 	analyseDictionary()
 
