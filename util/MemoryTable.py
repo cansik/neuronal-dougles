@@ -44,3 +44,5 @@ class MemoryTable(object):
     def load(self, file_name):
         with open(file_name, 'r') as fp:
             self.__data = json.load(fp)
+
+        self.__index = len(list(self.items()))

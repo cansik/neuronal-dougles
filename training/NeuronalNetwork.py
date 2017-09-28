@@ -111,7 +111,7 @@ class NeuralNetwork:
     @staticmethod
     def _add_bias(layer):
         ones = np.atleast_2d(np.ones(layer.shape[0]))
-        return np.concatenate((ones.T, X), axis=1)
+        return np.concatenate((ones.T, layer), axis=1)
 
     @staticmethod
     def _sigmoid(x):
