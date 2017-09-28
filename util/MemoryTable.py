@@ -1,4 +1,4 @@
-import copy
+import json
 
 
 class MemoryTable(object):
@@ -28,7 +28,7 @@ class MemoryTable(object):
             return self.__data[key][self.__index_name]
 
         # update index
-        index = copy.copy(self.__index)
+        index = self.__index
         self.__index += 1
 
         # add index to values
@@ -36,3 +36,11 @@ class MemoryTable(object):
 
         self.__data.update({key: value})
         return index
+
+    def save(self, file_name):
+        with open(file_name, 'w') as fp:
+            json.dump(self.__data, fp, sort_keys=True, indent=4, separators=(',', ': '))
+
+    def load(self, file_name):
+        with open(file_name, 'r') as fp:
+            self.__data = json.load(fp)

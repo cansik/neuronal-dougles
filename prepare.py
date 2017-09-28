@@ -1,15 +1,14 @@
-from tinydb import TinyDB, Query
-
 import csv
-from prepare.SyllableAnalyser import SyllableAnalyser
-from prepare.MemoryTable import MemoryTable
-from prepare.TextAnalyser import TextAnalyser
 
-DB_NAME = 'words.json'
+from prepare.SyllableAnalyser import SyllableAnalyser
+from prepare.TextAnalyser import TextAnalyser
+from util.MemoryTable import MemoryTable
+
 DICTIONARY_NAME = 'data/dictionary.csv'
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
+dictionaryTable = MemoryTable()
 
 syllableAnalyser = SyllableAnalyser()
 tokenAnalyser = TextAnalyser()
@@ -30,6 +29,8 @@ def analyseRow(row):
     wordType = row[1]
     description = row[2]
 
+    print('analysing %s' % word)
+
     tokens = tokenAnalyser.extract(description)
     syllables = syllableAnalyser.nsyl(word)
 
@@ -38,13 +39,15 @@ def analyseRow(row):
         return
 
     # write information to tables
-    for t in tokens:
-        tokenTable.insert(t)
+    tokenIndexes = map(lambda t: tokenTable.insert(t), tokens)
+    syllableIndexes = map(lambda s: syllablesTable.insert(s), syllables)
 
-    for s in syllables:
-        syllablesTable.insert(s)
-
-    print('analysing %s' % word)
+    dictionaryTable.insert(word, {
+        'wordType': wordType,
+        'description': description,
+        'tokens': tokenIndexes,
+        'syllables': syllableIndexes
+    })
 
 
 def showTables():
@@ -55,17 +58,23 @@ def showTables():
         print('%s: %s' % (k, v['id']))
 
 
+def saveTables():
+    dictionaryTable.save('data/dictionary.json')
+    tokenTable.save('data/tokens.json')
+    syllablesTable.save('data/syllables.json')
+
+
 def main():
     print('building word index...')
-
-    db = TinyDB(DB_NAME)
-    db.purge()
 
     analyseDictionary()
 
     # showTables()
 
-    print("Tokens: %s\tSyllables: %s" % (tokenTable.size(), syllablesTable.size()))
+    saveTables()
+
+    print("Dictionary Entries: %s\tTokens: %s\tSyllables: %s" % (
+        dictionaryTable.size(), tokenTable.size(), syllablesTable.size()))
 
 
 if __name__ == '__main__':
