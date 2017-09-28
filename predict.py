@@ -46,6 +46,11 @@ def predict(text, index, nn, X):
     return nn.predict_all(X)
 
 
+def resolve_prediction(Y):
+    # todo: one-hot to right syllables and create word list with permutation
+    return []
+
+
 def load_tables():
     dictionaryTable.load('data/dictionary.json')
     tokenTable.load('data/tokens.json')
@@ -62,7 +67,8 @@ def main():
     X = create_data_model(1)
     Y = predict(args.description[0], 0, nn, X)
 
-    # todo: one-hot to right syllables and create word list with permutation
+    syllables = resolve_prediction(Y)
+
 
 if __name__ == '__main__':
     main()
