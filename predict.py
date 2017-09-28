@@ -36,7 +36,7 @@ def predict(text, index, nn, X):
     tokens = tokenAnalyser.extract(text)
 
     # map tokens to index
-    indices = map(lambda x: tokenTable[x], tokens)
+    indices = map(lambda x: tokenTable[x]['id'], filter(lambda x: x in tokenTable, tokens))
 
     # create one hot encoding
     # set input
@@ -55,12 +55,12 @@ def load_tables():
 def main():
     args = process_arguments()
 
-    nn = load_object('data/empty_nn.pkl')
+    nn = load_object('data/neural_network.pkl')
     load_tables()
 
     # create prediction for one model
     X = create_data_model(1)
-    Y = predict(args.description, 0, nn, X)
+    Y = predict(args.description[0], 0, nn, X)
 
     # todo: one-hot to right syllables and create word list with permutation
 

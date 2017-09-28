@@ -14,6 +14,9 @@ class MemoryTable(object):
     def __getitem__(self, key):
         return self.__data[key]
 
+    def __contains__(self, item):
+        return item in self.__data
+
     def items(self):
         return self.__data.iteritems()
 
