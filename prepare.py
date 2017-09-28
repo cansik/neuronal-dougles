@@ -1,7 +1,9 @@
 from tinydb import TinyDB, Query
+
 import csv
 from prepare.SyllableAnalyser import SyllableAnalyser
 from prepare.MemoryTable import MemoryTable
+from prepare.TextAnalyser import TextAnalyser
 
 DB_NAME = 'words.json'
 DICTIONARY_NAME = 'data/dictionary.csv'
@@ -9,6 +11,7 @@ DICTIONARY_NAME = 'data/dictionary.csv'
 syllablesTable = MemoryTable()
 
 syllableAnalyser = SyllableAnalyser()
+tokenAnalyser = TextAnalyser()
 
 
 def analyseDictionary():
@@ -25,6 +28,8 @@ def analyseRow(row):
     word = row[0]
     wordType = row[1]
     description = row[2]
+
+    tokens = tokenAnalyser.extract(description)
     syllables = syllableAnalyser.nsyl(word)
 
     # guard if no syllables are found

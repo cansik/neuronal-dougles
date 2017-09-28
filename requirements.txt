@@ -1,3 +1,4 @@
+tinydb
 nltk
 numpy
 scikit-learn
