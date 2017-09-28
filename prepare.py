@@ -9,6 +9,7 @@ DB_NAME = 'words.json'
 DICTIONARY_NAME = 'data/dictionary.csv'
 
 syllablesTable = MemoryTable()
+tokenTable = MemoryTable()
 
 syllableAnalyser = SyllableAnalyser()
 tokenAnalyser = TextAnalyser()
@@ -36,13 +37,22 @@ def analyseRow(row):
     if len(syllables) == 0:
         return
 
-    # todo: analyse description
-
-    print('%s => %s' % (word, '-'.join(syllables)))
-
     # write information to tables
+    for t in tokens:
+        tokenTable.insert(t)
+
     for s in syllables:
-        print('%s: %s' % (s, syllablesTable.insert(s)))
+        syllablesTable.insert(s)
+
+    print('analysing %s' % word)
+
+
+def showTables():
+    for k, v in tokenTable.items():
+        print('%s: %s' % (k, v['id']))
+
+    for k, v in syllablesTable.items():
+        print('%s: %s' % (k, v['id']))
 
 
 def main():
@@ -53,8 +63,9 @@ def main():
 
     analyseDictionary()
 
-    for k, v in syllablesTable.items():
-        print('%s: %s' % (k, v['id']))
+    # showTables()
+
+    print("Tokens: %s\tSyllables: %s" % (tokenTable.size(), syllablesTable.size()))
 
 
 if __name__ == '__main__':

@@ -17,6 +17,9 @@ class MemoryTable(object):
     def items(self):
         return self.__data.iteritems()
 
+    def size(self):
+        return self.__index
+
     def insert(self, key, value=None):
         if value is None:
             value = dict()
