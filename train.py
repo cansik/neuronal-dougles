@@ -2,7 +2,7 @@ import numpy as np
 
 from training.NeuronalNetwork import NeuralNetwork
 from util.MemoryTable import MemoryTable
-from util.PickleUtil import save_object
+from util.PickleUtil import save_object, load_object
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
@@ -40,7 +40,7 @@ def train(nn, X, Y):
 
 
 def test(nn, X):
-    return nn.predict(X)
+    return nn.predict_all(X)
 
 
 def loadTables():
@@ -71,15 +71,14 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # create neuronal network
-    nn = NeuralNetwork([X_train.shape[1], 50, Y_train.shape[1]])
-
-    # test save
-    save_object(nn, 'data/empty_nn.pkl')
+    nn = NeuralNetwork([X_train.shape[1], 100, Y_train.shape[1]])
 
     print('train neural network...')
-    train(nn, X_train, Y_train)
+    # train(nn, X_train, Y_train)
+    # save_object(nn, 'data/neural_network.pkl')
 
-    save_object(nn, 'data/neural_network.pkl')
+    # load pre-learned neural network
+    nn = load_object('data/neural_network.pkl')
 
     print('testing neural network...')
     Y_predicted = test(nn, X_test)

@@ -43,7 +43,7 @@ def predict(text, index, nn, X):
     for t in indices:
         X[index, t] = 1
 
-    return nn.predict(X)
+    return nn.predict_all(X)
 
 
 def load_tables():
