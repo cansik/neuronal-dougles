@@ -2,6 +2,7 @@ import numpy as np
 
 from training.NeuronalNetwork import NeuralNetwork
 from util.MemoryTable import MemoryTable
+from util.PickleUtil import save_object
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
@@ -30,9 +31,6 @@ def create_data_model():
         # set output
         for s in entry['syllables']:
             Y[i, s] = 1
-
-    for i in range(10):
-        print("%s\t%s" % (X[i], Y[i]))
 
     return X, Y
 
@@ -75,10 +73,15 @@ def main():
     # create neuronal network
     nn = NeuralNetwork([X_train.shape[1], 50, Y_train.shape[1]])
 
-    print('train neuronal network...')
+    # test save
+    save_object(nn, 'data/empty_nn.pkl')
+
+    print('train neural network...')
     train(nn, X_train, Y_train)
 
-    print('testing neuronal network...')
+    save_object(nn, 'data/neural_network.pkl')
+
+    print('testing neural network...')
     Y_predicted = test(nn, X_test)
 
     accuracy = nn.score(Y_test, Y_predicted)
