@@ -121,7 +121,7 @@ def main():
     syllables = resolve_prediction(Y)
     syllables.sort(key=lambda x: x[2], reverse=True)
 
-    tops = get_top(syllables, 0.1)
+    tops = syllables[:3] # get_top(syllables, 0.1)
 
     print('')
     print('Description:')
@@ -129,8 +129,10 @@ def main():
 
     print('')
     print('Words:')
-    for word in map(lambda x: ''.join(x), permutate_words(tops)):
-        print(word)
+
+    perms = map(lambda x: ''.join(x), permutate_words(tops))
+    for i, word in enumerate(perms):
+        print('%s: %s' % (i, word))
 
 
 if __name__ == '__main__':
