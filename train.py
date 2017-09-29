@@ -82,8 +82,11 @@ def main():
 
     print('testing neural network...')
     Y_predicted = test(nn, X_test)
+    Y_binarized = nn.binarize_predicted(Y_predicted)
 
-    accuracy = nn.score(Y_test, Y_predicted)
+    print('Ones: %s' % np.count_nonzero(Y_binarized))
+
+    accuracy = nn.score(Y_test, Y_binarized)
 
     print('Accuracy: %s' % accuracy)
 
