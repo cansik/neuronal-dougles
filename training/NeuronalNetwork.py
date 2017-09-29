@@ -73,6 +73,10 @@ class NeuralNetwork:
             p = self.predict(X[i])
             predicted.append(p)
 
+            # show status
+            self.update_progress(int(float(i) / X.shape[0] * 100.0))
+        print
+
         return np.vstack(predicted)
 
     @staticmethod
@@ -124,3 +128,7 @@ class NeuralNetwork:
     @staticmethod
     def rmse(targets, predictions):
         return np.sqrt(np.mean((predictions - targets) ** 2))
+
+    @staticmethod
+    def update_progress(progress):
+        print '\r[{0}] {1}%'.format('#' * (progress / 10), progress),

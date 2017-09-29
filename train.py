@@ -74,8 +74,8 @@ def main():
     nn = NeuralNetwork([X_train.shape[1], 100, Y_train.shape[1]])
 
     print('train neural network...')
-    # train(nn, X_train, Y_train)
-    # save_object(nn, 'data/neural_network.pkl')
+    train(nn, X_train, Y_train)
+    save_object(nn, 'data/neural_network.pkl')
 
     # load pre-learned neural network
     nn = load_object('data/neural_network.pkl')
