@@ -6,11 +6,15 @@ from prepare.TextAnalyser import TextAnalyser
 from util.MemoryTable import MemoryTable
 from util.PickleUtil import load_object
 
+from math import factorial
+
 tokenAnalyser = TextAnalyser()
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
 dictionaryTable = MemoryTable()
+
+syllableIndex = dict()
 
 
 def process_arguments():
@@ -47,8 +51,54 @@ def predict(text, index, nn, X):
 
 
 def resolve_prediction(Y):
-    # todo: one-hot to right syllables and create word list with permutation
-    return []
+    syllables = list()
+    for i in xrange(0, Y.shape[1]):
+        confidence = Y[0, i]
+        syllable = syllableIndex[i]
+
+        syllables.append((i, syllable, confidence))
+
+    return syllables
+
+
+def get_top(syllables, max_percentage_difference):
+    if len(syllables) == 0:
+        return []
+
+    tops = []
+    last_confidence = syllables[0][2]
+    index = 0
+
+    while index < len(syllables) \
+            and (last_confidence - syllables[index][2]) / last_confidence <= max_percentage_difference:
+        tops.append(syllables[index])
+        index += 1
+
+    return tops
+
+
+def permutate_words(syllables):
+    return permutations(map(lambda x: x[1], syllables))
+
+
+def permutations(l):
+    perms = []
+    length = len(l)
+    for x in xrange(factorial(length)):
+        available = list(l)
+        newPermutation = []
+        for radix in xrange(length, 0, -1):
+            placeValue = factorial(radix - 1)
+            index = x / placeValue
+            newPermutation.append(available.pop(index))
+            x -= index * placeValue
+        perms.append(newPermutation)
+    return perms
+
+
+def build_syllable_index():
+    for syl, entry in syllablesTable.items():
+        syllableIndex.update({entry['id']: syl})
 
 
 def load_tables():
@@ -62,12 +112,25 @@ def main():
 
     nn = load_object('data/neural_network.pkl')
     load_tables()
+    build_syllable_index()
 
     # create prediction for one model
     X = create_data_model(1)
     Y = predict(args.description[0], 0, nn, X)
 
     syllables = resolve_prediction(Y)
+    syllables.sort(key=lambda x: x[2], reverse=True)
+
+    tops = get_top(syllables, 0.1)
+
+    print('')
+    print('Description:')
+    print(args.description[0])
+
+    print('')
+    print('Words:')
+    for word in map(lambda x: ''.join(x), permutate_words(tops)):
+        print(word)
 
 
 if __name__ == '__main__':
