@@ -71,7 +71,7 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # create neuronal network
-    nn = NeuralNetwork([X_train.shape[1], 100, Y_train.shape[1]])
+    nn = NeuralNetwork([X_train.shape[1], 500, Y_train.shape[1]])
 
     print('train neural network...')
     train(nn, X_train, Y_train)
