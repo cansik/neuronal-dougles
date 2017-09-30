@@ -128,6 +128,11 @@ def main():
     print(args.description[0])
 
     print('')
+    print('Syllables: ')
+    for s in tops:
+        print('%s: %s (%s)' % (s[0], s[1], s[2]))
+
+    print('')
     print('Words:')
 
     perms = map(lambda x: ''.join(x), permutate_words(tops))
