@@ -9,7 +9,7 @@ slicer = SyllableSlicer()
 analyser = SyllableAnalyser()
 
 slicer_result = map(lambda x: slicer.slice(x), words)
-analyser_result = map(lambda x: analyser.split_to_syllable(x), words)
+analyser_result = map(lambda x: analyser.slice(x), words)
 
 for i, w in enumerate(words):
     print("%s:\t\t\t%s\t\t%s" % (w, '-'.join(slicer_result[i]), '-'.join(analyser_result[i])))

@@ -20,7 +20,7 @@ class SyllableAnalyser(object):
         parts.append(string)
         return filter(None, parts)
 
-    def split_to_syllable(self, word):
+    def slice(self, word):
         try:
             lutes = self.__cmu[word.lower()][0]
 

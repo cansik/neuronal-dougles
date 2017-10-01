@@ -1,6 +1,6 @@
 import csv
 
-from prepare.SyllableAnalyser import SyllableAnalyser
+from prepare.SyllableSlicer import SyllableSlicer
 from prepare.TextAnalyser import TextAnalyser
 from util.MemoryTable import MemoryTable
 
@@ -10,7 +10,7 @@ syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
 dictionaryTable = MemoryTable()
 
-syllableAnalyser = SyllableAnalyser()
+syllableAnalyser = SyllableSlicer()
 tokenAnalyser = TextAnalyser()
 
 
@@ -32,7 +32,7 @@ def analyse_row(row):
     print('analysing %s' % word)
 
     tokens = tokenAnalyser.extract(description)
-    syllables = syllableAnalyser.split_to_syllable(word)
+    syllables = syllableAnalyser.slice(word)
 
     # guard if no syllables are found
     if len(syllables) == 0:
