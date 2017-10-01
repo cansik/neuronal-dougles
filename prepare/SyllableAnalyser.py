@@ -6,7 +6,8 @@ class SyllableAnalyser(object):
         self.__cmu = cmudict.dict()
         pass
 
-    def splitAt(self, string, indices):
+    @staticmethod
+    def split_at(string, indices):
         parts = []
         counter = 0
 
@@ -19,7 +20,7 @@ class SyllableAnalyser(object):
         parts.append(string)
         return filter(None, parts)
 
-    def nsyl(self, word):
+    def split_to_syllable(self, word):
         try:
             lutes = self.__cmu[word.lower()][0]
 
@@ -27,6 +28,6 @@ class SyllableAnalyser(object):
                 return []
 
             indices = [i for i, l in enumerate(lutes) if l[-1].isdigit()]
-            return self.splitAt(word, indices)  # map(lambda x: str(x), )
+            return self.split_at(word, indices)  # map(lambda x: str(x), )
         except KeyError:
             return []

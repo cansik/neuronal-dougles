@@ -14,16 +14,16 @@ syllableAnalyser = SyllableAnalyser()
 tokenAnalyser = TextAnalyser()
 
 
-def analyseDictionary():
+def analyse_dictionary():
     with open(DICTIONARY_NAME) as f:
         read = csv.reader(f)
         for row in read:
             # filter out any one word and check if there are only alphas
             if len(row[0]) > 3 and row[0].isalpha():
-                analyseRow(row)
+                analyse_row(row)
 
 
-def analyseRow(row):
+def analyse_row(row):
     # analyse the row
     word = row[0]
     wordType = row[1]
@@ -32,7 +32,7 @@ def analyseRow(row):
     print('analysing %s' % word)
 
     tokens = tokenAnalyser.extract(description)
-    syllables = syllableAnalyser.nsyl(word)
+    syllables = syllableAnalyser.split_to_syllable(word)
 
     # guard if no syllables are found
     if len(syllables) == 0:
@@ -50,7 +50,7 @@ def analyseRow(row):
     })
 
 
-def showTables():
+def show_tables():
     for k, v in tokenTable.items():
         print('%s: %s' % (k, v['id']))
 
@@ -58,7 +58,7 @@ def showTables():
         print('%s: %s' % (k, v['id']))
 
 
-def saveTables():
+def save_tables():
     dictionaryTable.save('data/dictionary.json')
     tokenTable.save('data/tokens.json')
     syllablesTable.save('data/syllables.json')
@@ -67,11 +67,11 @@ def saveTables():
 def main():
     print('building word index...')
 
-    analyseDictionary()
+    analyse_dictionary()
 
     # showTables()
 
-    saveTables()
+    save_tables()
 
     print("Dictionary Entries: %s\tTokens: %s\tSyllables: %s" % (
         dictionaryTable.size(), tokenTable.size(), syllablesTable.size()))

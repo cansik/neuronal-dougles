@@ -43,7 +43,7 @@ def test(nn, X):
     return nn.predict_all(X)
 
 
-def loadTables():
+def load_tables():
     dictionaryTable.load('data/dictionary.json')
     tokenTable.load('data/tokens.json')
     syllablesTable.load('data/syllables.json')
@@ -51,7 +51,7 @@ def loadTables():
 
 def main():
     print('loading data...')
-    loadTables()
+    load_tables()
 
     print('Dictionary Entries: %s\tTokens: %s\tSyllables: %s' % (
         dictionaryTable.size(), tokenTable.size(), syllablesTable.size()))
