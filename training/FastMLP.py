@@ -4,27 +4,28 @@ from keras.optimizers import RMSprop
 
 
 class FastMLP(object):
-    def __init__(self, layers, learning_rate=0.1, epochs=5, batch_size=128):
+    def __init__(self, layers, learning_rate=0.1, epochs=20, batch_size=128, lazy=False):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
 
-        self.model = Sequential()
+        if not lazy:
+            self.model = Sequential()
 
-        self.model.add(Dense(512, activation='relu', input_shape=(layers[0],)))
-        self.model.add(Dropout(0.2))
-
-        for n_units in layers:
-            self.model.add(Dense(n_units, activation='relu'))
+            self.model.add(Dense(512, activation='relu', input_shape=(layers[0],)))
             self.model.add(Dropout(0.2))
 
-        self.model.add(Dense(layers[-1], activation='softmax'))
+            for n_units in layers:
+                self.model.add(Dense(n_units, activation='relu'))
+                self.model.add(Dropout(0.2))
 
-        self.model.summary()
+            self.model.add(Dense(layers[-1], activation='softmax'))
 
-        self.model.compile(loss='categorical_crossentropy',
-                           optimizer=RMSprop(),
-                           metrics=['accuracy'])
+            self.model.summary()
+
+            self.model.compile(loss='categorical_crossentropy',
+                               optimizer=RMSprop(),
+                               metrics=['accuracy'])
 
     def fit(self, x_train, y_train):
         return self.model.fit(x_train, y_train,
