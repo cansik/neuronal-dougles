@@ -72,7 +72,7 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # create neuronal network
-    nn = FastMLP([X_train.shape[1], 5000, 5000, Y_train.shape[1]])
+    nn = FastMLP([X_train.shape[1], 5000, 5000, Y_train.shape[1]], epochs=2)
 
     print('train neural network...')
     train(nn, X_train, Y_train)

@@ -32,7 +32,7 @@ def analyse_row(row):
     print('analysing %s' % word)
 
     tokens = tokenAnalyser.extract(description)
-    syllables = syllableAnalyser.slice(word)
+    syllables = map(lambda x: x.lower(), syllableAnalyser.slice(word))
 
     # guard if no syllables are found
     if len(syllables) == 0:
