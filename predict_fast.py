@@ -22,8 +22,6 @@ def process_arguments():
     parser = argparse.ArgumentParser(description='Neural network to create new words out of descriptions.')
     parser.add_argument('description', nargs='+', help='Description of the new word situation.')
 
-    parser.print_help()
-
     return parser.parse_args()
 
 
@@ -112,7 +110,7 @@ def main():
     args = process_arguments()
 
     nn = FastMLP(layers=[], lazy=True)
-    nn.load('data/fast_model.json', 'data/fast_weights_500_500.h5')
+    nn.load('data/fast_model.json', 'data/fast_weights.h5')
 
     load_tables()
     build_syllable_index()

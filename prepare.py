@@ -1,5 +1,7 @@
+import argparse
 import csv
 
+from prepare.SyllableAnalyser import SyllableAnalyser
 from prepare.SyllableSlicer import SyllableSlicer
 from prepare.TextAnalyser import TextAnalyser
 from util.MemoryTable import MemoryTable
@@ -50,6 +52,14 @@ def analyse_row(row):
     })
 
 
+def process_arguments():
+    parser = argparse.ArgumentParser(description='Prepare dictionary to be trained into neural network.')
+    parser.add_argument('--syllable', default='sonority', choices=['sonority', 'pronouncing'],
+                        help='Syllable slicing algorithm.')
+
+    return parser.parse_args()
+
+
 def show_tables():
     for k, v in tokenTable.items():
         print('%s: %s' % (k, v['id']))
@@ -65,6 +75,12 @@ def save_tables():
 
 
 def main():
+    args = process_arguments()
+
+    if args.syllable is 'pronouncing':
+        global syllableAnalyser
+        syllableAnalyser = SyllableAnalyser()
+
     print('building word index...')
 
     analyse_dictionary()
