@@ -1,10 +1,11 @@
+from keras import optimizers
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout
 from keras.optimizers import RMSprop
 
 
 class FastMLP(object):
-    def __init__(self, layers, learning_rate=0.1, epochs=20, batch_size=128, lazy=False):
+    def __init__(self, layers, learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
@@ -23,9 +24,10 @@ class FastMLP(object):
 
             self.model.summary()
 
-            self.model.compile(loss='categorical_crossentropy',
-                               optimizer=RMSprop(),
-                               metrics=['accuracy'])
+            sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
+            self.model.compile(loss='mean_squared_error', optimizer=sgd)
+
+            print('model: SGD')
 
     def fit(self, x_train, y_train):
         return self.model.fit(x_train, y_train,
