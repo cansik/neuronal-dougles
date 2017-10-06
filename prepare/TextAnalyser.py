@@ -1,3 +1,4 @@
+from nltk import WordNetLemmatizer
 from rake_nltk import Rake
 from nltk.stem.lancaster import LancasterStemmer
 
@@ -7,6 +8,7 @@ class TextAnalyser(object):
         self.threshold = 0.9
         self.__rake = Rake()
         self.__stemmer = LancasterStemmer()
+        self.__lemma = WordNetLemmatizer()
         self.__stopwords = ['alt']
         pass
 
@@ -15,9 +17,11 @@ class TextAnalyser(object):
         scores = self.__rake.get_ranked_phrases_with_scores()
         keywords = self.unpack_keywords(scores)
         words = filter(lambda x: x[1] not in self.__stopwords and x[1].isalnum(), keywords)
-        stems = map(lambda x: self.__stemmer.stem(x[1]), filter(lambda x: x[0] > self.threshold, words))
 
-        # todo add lemmatization if needed
+        filtered_words = map(lambda x: x[1], filter(lambda x: x[0] > self.threshold, words))
+
+        lemms = map(lambda x: self.__lemma.lemmatize(x), filtered_words)
+        stems = map(lambda x: self.__stemmer.stem(x), lemms)
 
         return stems
 

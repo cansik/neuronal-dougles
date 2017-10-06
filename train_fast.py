@@ -82,7 +82,7 @@ def main():
     # params
     hidden_layers = [5000]
     epochs = 1
-    learning_rate = 0.2
+    learning_rate = 0.02
 
     # create neuronal network
     nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate)
