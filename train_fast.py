@@ -54,7 +54,7 @@ def load_tables():
 
 def log(text):
     with open("log.txt", "a") as myfile:
-        myfile.write(text)
+        myfile.write('%s\n' % text)
 
 
 def main():
@@ -68,21 +68,20 @@ def main():
     X, Y = create_data_model()
 
     # split model in percentage
-    train_end = int(dictionaryTable.size() * 0.25)
+    train_end = int(dictionaryTable.size() * 0.70)
     test_start = train_end + 1
-    test_end = test_start + train_end
 
     X_train, Y_train = X[0:train_end], Y[0:train_end]
-    X_test, Y_test = X[test_start:test_end], Y[test_start:test_end]
+    X_test, Y_test = X[test_start:], Y[test_start:]
 
     # print sizes
     print('Train: X %s Y %s' % (X_train.shape, Y_train.shape))
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # params
-    hidden_layers = [5000]
-    epochs = 1
-    learning_rate = 0.02
+    hidden_layers = [500, 500]
+    epochs = 20
+    learning_rate = 0.002
 
     # create neuronal network
     nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate)
@@ -100,9 +99,9 @@ def main():
     accuracy = nn.score(X_test, Y_test)
     log(','.join(map(str,
                      [datetime.now(), X_train.shape[1], Y_train.shape[1], '-'.join(map(str, hidden_layers)), epochs,
-                      learning_rate, accuracy])))
+                      learning_rate, accuracy[2]])))
 
-    print('Accuracy: %s' % accuracy)
+    print('Accuracy: %s' % accuracy[2])
 
 
 if __name__ == '__main__':

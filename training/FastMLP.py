@@ -1,4 +1,5 @@
 from keras import Input
+from keras import metrics
 from keras import optimizers
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout
@@ -36,7 +37,9 @@ class FastMLP(object):
             print('model: SGD')
 
     def compile(self):
-        self.model.compile(loss='mean_squared_error', optimizer=self.sgd)
+        self.model.compile(loss='mean_squared_error',
+                           optimizer=self.sgd,
+                           metrics=[metrics.mae, metrics.binary_accuracy])
 
     def fit(self, x_train, y_train):
         return self.model.fit(x_train, y_train,

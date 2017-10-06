@@ -24,10 +24,15 @@ tokenAnalyser = TextAnalyser()
 def analyse_dictionary():
     with open(DICTIONARY_NAME) as f:
         read = csv.reader(f)
+
+        counter = 0
+
         for row in read:
-            # filter out any one word and check if there are only alphas
-            if len(row[0]) > 3 and row[0].isalpha():
-                analyse_row(row)
+            if counter % 1 == 0:
+                # filter out any one word and check if there are only alphas
+                if len(row[0]) > 3 and row[0].isalpha():
+                    analyse_row(row)
+            counter += 1
 
 
 def analyse_row(row):

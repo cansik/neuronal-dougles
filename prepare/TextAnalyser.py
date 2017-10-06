@@ -1,11 +1,11 @@
 from nltk import WordNetLemmatizer
-from rake_nltk import Rake
 from nltk.stem.lancaster import LancasterStemmer
+from rake_nltk import Rake
 
 
 class TextAnalyser(object):
     def __init__(self):
-        self.threshold = 0.9
+        self.threshold = 0.95
         self.__rake = Rake()
         self.__stemmer = LancasterStemmer()
         self.__lemma = WordNetLemmatizer()
