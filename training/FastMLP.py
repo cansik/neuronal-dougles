@@ -2,10 +2,14 @@ from keras import optimizers
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout
 from keras.optimizers import RMSprop
+from keras.utils import plot_model
 
 
 class FastMLP(object):
-    def __init__(self, layers, learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
+    def __init__(self, layers=None, activation='sigmoid', learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
+        if layers is None:
+            layers = [512]
+
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.batch_size = batch_size
@@ -13,16 +17,17 @@ class FastMLP(object):
         if not lazy:
             self.model = Sequential()
 
-            self.model.add(Dense(512, activation='relu', input_shape=(layers[0],)))
-            self.model.add(Dropout(0.2))
+            self.model.add(Dense(layers[1], activation=activation, input_shape=(layers[0],)))
 
-            for n_units in layers:
-                self.model.add(Dense(n_units, activation='relu'))
-                self.model.add(Dropout(0.2))
+            for i, n_units in enumerate(layers):
+                if i > 1:
+                    self.model.add(Dense(n_units, activation=activation))
 
-            self.model.add(Dense(layers[-1], activation='softmax'))
+            self.model.add(Dense(layers[-1], activation=activation))
 
             self.model.summary()
+
+            #plot_model(self.model, to_file='model.png')
 
             sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
             self.model.compile(loss='mean_squared_error', optimizer=sgd)

@@ -14,7 +14,7 @@ class TextAnalyser(object):
         self.__rake.extract_keywords_from_text(text)
         scores = self.__rake.get_ranked_phrases_with_scores()
         keywords = self.unpack_keywords(scores)
-        words = filter(lambda x: x[1] not in self.__stopwords, keywords)
+        words = filter(lambda x: x[1] not in self.__stopwords and x[1].isalnum(), keywords)
         stems = map(lambda x: self.__stemmer.stem(x[1]), filter(lambda x: x[0] > self.threshold, words))
 
         # todo add lemmatization if needed

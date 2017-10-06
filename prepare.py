@@ -1,10 +1,16 @@
 import argparse
 import csv
 
+import sys
+
+from prepare.Hyphenator import Hyphenator
 from prepare.SyllableAnalyser import SyllableAnalyser
 from prepare.SyllableSlicer import SyllableSlicer
 from prepare.TextAnalyser import TextAnalyser
 from util.MemoryTable import MemoryTable
+
+thismodule = sys.modules[__name__]
+thismodule.syllableAnalyser = SyllableSlicer()
 
 DICTIONARY_NAME = 'data/dictionary.csv'
 
@@ -12,7 +18,6 @@ syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
 dictionaryTable = MemoryTable()
 
-syllableAnalyser = SyllableSlicer()
 tokenAnalyser = TextAnalyser()
 
 
@@ -31,14 +36,14 @@ def analyse_row(row):
     wordType = row[1]
     description = row[2]
 
-    print('analysing %s' % word)
-
     tokens = tokenAnalyser.extract(description)
-    syllables = map(lambda x: x.lower(), syllableAnalyser.slice(word))
+    syllables = map(lambda x: x.lower(), thismodule.syllableAnalyser.slice(word))
 
     # guard if no syllables are found
     if len(syllables) == 0:
         return
+
+    print('%s: %s (%s)' % (word, '-'.join(syllables), ', '.join(tokens)))
 
     # write information to tables
     tokenIndexes = map(lambda t: tokenTable.insert(t), tokens)
@@ -54,7 +59,7 @@ def analyse_row(row):
 
 def process_arguments():
     parser = argparse.ArgumentParser(description='Prepare dictionary to be trained into neural network.')
-    parser.add_argument('--syllable', default='sonority', choices=['sonority', 'pronouncing'],
+    parser.add_argument('--syllable', default='sonority', choices=['sonority', 'pronouncing', 'hyphenator'],
                         help='Syllable slicing algorithm.')
 
     return parser.parse_args()
@@ -77,9 +82,12 @@ def save_tables():
 def main():
     args = process_arguments()
 
-    if args.syllable is 'pronouncing':
-        global syllableAnalyser
-        syllableAnalyser = SyllableAnalyser()
+    if args.syllable == 'pronouncing':
+        thismodule.syllableAnalyser = SyllableAnalyser()
+
+    if args.syllable == 'hyphenator':
+        print('using hyphenator')
+        thismodule.syllableAnalyser = Hyphenator()
 
     print('building word index...')
 
