@@ -15,6 +15,8 @@ class FastMLP(object):
         self.epochs = epochs
         self.batch_size = batch_size
 
+        self.sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
+
         if not lazy:
             self.model = Sequential()
             self.model.add(Dense(layers[1], activation=activation, use_bias=use_bias, input_shape=(layers[0],)))
@@ -29,10 +31,12 @@ class FastMLP(object):
 
             plot_model(self.model, to_file='model.png', show_shapes=True)
 
-            sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
-            self.model.compile(loss='mean_squared_error', optimizer=sgd)
+            self.compile()
 
             print('model: SGD')
+
+    def compile(self):
+        self.model.compile(loss='mean_squared_error', optimizer=self.sgd)
 
     def fit(self, x_train, y_train):
         return self.model.fit(x_train, y_train,
@@ -42,9 +46,6 @@ class FastMLP(object):
 
     def score(self, x_test, y_test):
         score = self.model.evaluate(x_test, y_test, verbose=0)
-        print('Test loss:', score)
-        # print('Test accuracy:', score[1])
-
         return score
 
     def predict(self, x_test):
@@ -72,3 +73,5 @@ class FastMLP(object):
         # load weights into new model
         if weights_name is not None:
             self.model.load_weights(weights_name)
+
+        self.compile()

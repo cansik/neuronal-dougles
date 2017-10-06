@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import numpy as np
 
 from training.FastMLP import FastMLP
@@ -50,6 +52,11 @@ def load_tables():
     syllablesTable.load('data/syllables.json')
 
 
+def log(text):
+    with open("log.txt", "a") as myfile:
+        myfile.write(text)
+
+
 def main():
     print('loading data...')
     load_tables()
@@ -63,33 +70,37 @@ def main():
     # split model in percentage
     train_end = int(dictionaryTable.size() * 0.25)
     test_start = train_end + 1
+    test_end = test_start + train_end
 
     X_train, Y_train = X[0:train_end], Y[0:train_end]
-    X_test, Y_test = X[test_start:], Y[test_start:]
+    X_test, Y_test = X[test_start:test_end], Y[test_start:test_end]
 
     # print sizes
     print('Train: X %s Y %s' % (X_train.shape, Y_train.shape))
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
+    # params
+    hidden_layers = [5000]
+    epochs = 1
+    learning_rate = 0.2
+
     # create neuronal network
-    nn = FastMLP([X_train.shape[1], 5000, Y_train.shape[1]], epochs=1, learning_rate=0.2)
+    nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate)
 
     print('train neural network...')
     train(nn, X_train, Y_train)
 
     nn.save('data/fast_model.json', 'data/fast_weights.h5')
-    # save_object(nn, 'data/neural_network.pkl')
 
     # load pre-learned neural network
-    # nn.load('data/fast_model.json', 'data/fast_weights.h5')
-    # nn = load_object('data/neural_network.pkl')
+    nn.load('data/fast_model.json', 'data/fast_weights.h5')
 
     print('testing neural network...')
-    # Y_predicted = test(nn, X_test)
-
-    # print('Ones: %s' % np.count_nonzero(Y_predicted))
 
     accuracy = nn.score(X_test, Y_test)
+    log(','.join(map(str,
+                     [datetime.now(), X_train.shape[1], Y_train.shape[1], '-'.join(map(str, hidden_layers)), epochs,
+                      learning_rate, accuracy])))
 
     print('Accuracy: %s' % accuracy)
 
