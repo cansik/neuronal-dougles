@@ -60,8 +60,8 @@ def main():
     # creating datamodel
     X, Y = create_data_model()
 
-    # split model in percentage train: 75% test: 25%
-    train_end = int(dictionaryTable.size() * 0.75)
+    # split model in percentage
+    train_end = int(dictionaryTable.size() * 0.25)
     test_start = train_end + 1
 
     X_train, Y_train = X[0:train_end], Y[0:train_end]
@@ -72,7 +72,7 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # create neuronal network
-    nn = FastMLP([X_train.shape[1], 1000, Y_train.shape[1]], epochs=1, learning_rate=0.2)
+    nn = FastMLP([X_train.shape[1], 5000, Y_train.shape[1]], epochs=1, learning_rate=0.2)
 
     print('train neural network...')
     train(nn, X_train, Y_train)
@@ -85,11 +85,11 @@ def main():
     # nn = load_object('data/neural_network.pkl')
 
     print('testing neural network...')
-    Y_predicted = test(nn, X_test)
+    # Y_predicted = test(nn, X_test)
 
-    print('Ones: %s' % np.count_nonzero(Y_predicted))
+    # print('Ones: %s' % np.count_nonzero(Y_predicted))
 
-    accuracy = nn.score(Y_test, Y_predicted)
+    accuracy = nn.score(X_test, Y_test)
 
     print('Accuracy: %s' % accuracy)
 

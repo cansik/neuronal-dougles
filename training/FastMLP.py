@@ -1,3 +1,4 @@
+from keras import Input
 from keras import optimizers
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout
@@ -6,7 +7,7 @@ from keras.utils import plot_model
 
 
 class FastMLP(object):
-    def __init__(self, layers=None, activation='sigmoid', learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
+    def __init__(self, layers=None, activation='sigmoid', use_bias=True, learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
         if layers is None:
             layers = [512]
 
@@ -16,18 +17,17 @@ class FastMLP(object):
 
         if not lazy:
             self.model = Sequential()
-
-            self.model.add(Dense(layers[1], activation=activation, input_shape=(layers[0],)))
+            self.model.add(Dense(layers[1], activation=activation, use_bias=use_bias, input_shape=(layers[0],)))
 
             for i, n_units in enumerate(layers):
-                if i > 1:
-                    self.model.add(Dense(n_units, activation=activation))
+                if 2 < i < len(layers) - 1:
+                    self.model.add(Dense(n_units, use_bias=use_bias, activation=activation))
 
-            self.model.add(Dense(layers[-1], activation=activation))
+            self.model.add(Dense(layers[-1], use_bias=use_bias, activation=activation))
 
             self.model.summary()
 
-            #plot_model(self.model, to_file='model.png')
+            plot_model(self.model, to_file='model.png', show_shapes=True)
 
             sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
             self.model.compile(loss='mean_squared_error', optimizer=sgd)
@@ -42,10 +42,10 @@ class FastMLP(object):
 
     def score(self, x_test, y_test):
         score = self.model.evaluate(x_test, y_test, verbose=0)
-        print('Test loss:', score[0])
+        print('Test loss:', score)
         # print('Test accuracy:', score[1])
 
-        return score[1]
+        return score
 
     def predict(self, x_test):
         return self.model.predict(x_test, batch_size=self.batch_size)
