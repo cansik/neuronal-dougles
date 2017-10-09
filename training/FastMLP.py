@@ -8,7 +8,8 @@ from keras.utils import plot_model
 
 
 class FastMLP(object):
-    def __init__(self, layers=None, activation='sigmoid', use_bias=True, learning_rate=0.01, epochs=20, batch_size=128, lazy=False):
+    def __init__(self, layers=None, activation='sigmoid', use_bias=True, learning_rate=0.01, epochs=20, batch_size=128,
+                 momentum=0.9, lazy=False):
         if layers is None:
             layers = [512]
 
@@ -16,7 +17,7 @@ class FastMLP(object):
         self.epochs = epochs
         self.batch_size = batch_size
 
-        self.sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
+        self.sgd = optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=momentum, nesterov=True)
 
         if not lazy:
             self.model = Sequential()
@@ -39,7 +40,7 @@ class FastMLP(object):
     def compile(self):
         self.model.compile(loss='mean_squared_error',
                            optimizer=self.sgd,
-                           metrics=[metrics.mae, metrics.binary_accuracy])
+                           metrics=[metrics.mae, metrics.categorical_accuracy])
 
     def fit(self, x_train, y_train):
         return self.model.fit(x_train, y_train,

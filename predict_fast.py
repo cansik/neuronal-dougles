@@ -37,9 +37,11 @@ def create_data_model(length):
 def predict(text, index, nn, X):
     # extract tokens
     tokens = tokenAnalyser.extract(text)
+    indexed_tokens = filter(lambda x: x in tokenTable, tokens)
+    print('Extracted tokens: %s' % ', '.join(indexed_tokens))
 
     # map tokens to index
-    indices = map(lambda x: tokenTable[x]['id'], filter(lambda x: x in tokenTable, tokens))
+    indices = map(lambda x: tokenTable[x]['id'], indexed_tokens)
 
     # create one hot encoding
     # set input

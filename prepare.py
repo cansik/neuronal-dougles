@@ -167,7 +167,7 @@ def main():
 
     if args.filter:
         print('filtering by relation limit...')
-        filter_to_relevant(2, 2)
+        filter_to_relevant(1, 1)
 
     print('creating index...')
     create_index(store_raw=args.debug)

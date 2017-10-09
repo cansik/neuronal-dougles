@@ -77,12 +77,13 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # params
-    hidden_layers = [2000, 2000, 2000]
+    hidden_layers = [5000, 5000]
     epochs = 1
-    learning_rate = 0.02
+    learning_rate = 0.2
 
     # create neuronal network
-    nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate)
+    nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate,
+                 momentum=0.9)
 
     print('train neural network...')
     train(nn, X_train, Y_train)
