@@ -8,6 +8,7 @@ from prepare.SyllableAnalyser import SyllableAnalyser
 from prepare.SyllableSlicer import SyllableSlicer
 from prepare.TextAnalyser import TextAnalyser
 from util.MemoryTable import MemoryTable
+from collections import defaultdict
 
 thismodule = sys.modules[__name__]
 thismodule.syllableAnalyser = SyllableSlicer()
@@ -48,24 +49,91 @@ def analyse_row(row):
     if len(syllables) == 0:
         return
 
-    print('%s: %s (%s)' % (word, '-'.join(syllables), ', '.join(tokens)))
-
-    # write information to tables
-    tokenIndexes = map(lambda t: tokenTable.insert(t), tokens)
-    syllableIndexes = map(lambda s: syllablesTable.insert(s), syllables)
+    # print('%s: %s (%s)' % (word, '-'.join(syllables), ', '.join(tokens)))
 
     dictionaryTable.insert(word, {
         'wordType': wordType,
         'description': description,
-        'tokens': tokenIndexes,
-        'syllables': syllableIndexes
+        'token_list': tokens,
+        'syllable_list': syllables
     })
+
+
+def create_index(store_raw):
+    for i, (word, entry) in enumerate(dictionaryTable.items()):
+        tokenIndexes = map(lambda t: tokenTable.insert(t), entry['token_list'])
+        syllableIndexes = map(lambda s: syllablesTable.insert(s), entry['syllable_list'])
+
+        entry.update({
+            'syllables': syllableIndexes,
+            'tokens': tokenIndexes
+        })
+
+        if not store_raw:
+            entry.pop('syllable_list')
+            entry.pop('token_list')
+
+
+def filter_to_relevant(max_t_s, max_s_t):
+    # s_t = 1*syllable has to be linked to n*tokens
+    syllables = defaultdict(set)
+    tokens = defaultdict(set)
+
+    # prepare index
+    print('create item index...')
+    for i, (word, entry) in enumerate(dictionaryTable.items()):
+        # count token to syllable
+        for t in entry['token_list']:
+            for s in entry['syllable_list']:
+                tokens[t].add(s)
+
+        # set output
+        for s in entry['syllable_list']:
+            for t in entry['token_list']:
+                syllables[s].add(t)
+
+    # analyse
+    print('analyse items...')
+    removable_tokens = set()
+    removable_syllables = set()
+
+    for t, s in tokens.items():
+        l = len(s)
+        if l > max_t_s:
+            removable_tokens.add(t)
+
+    for s, t in syllables.items():
+        l = len(t)
+        if l > max_s_t:
+            removable_syllables.add(s)
+
+    print("Removable Tokens: %s\tSyllables: %s" % (len(removable_tokens), len(removable_syllables)))
+
+    # remove not relevant items
+    print('remove items...')
+    removable_words = []
+    for i, (word, entry) in enumerate(dictionaryTable.items()):
+        for t in entry['token_list']:
+            if t in removable_tokens:
+                entry['token_list'].remove(t)
+
+        for s in entry['syllable_list']:
+            if s in removable_syllables:
+                entry['syllable_list'].remove(s)
+
+        if len(entry['syllable_list']) == 0 or len(entry['token_list']) == 0:
+            removable_words.append(word)
+
+    for word in removable_words:
+        dictionaryTable.remove(word)
 
 
 def process_arguments():
     parser = argparse.ArgumentParser(description='Prepare dictionary to be trained into neural network.')
     parser.add_argument('--syllable', default='sonority', choices=['sonority', 'pronouncing', 'hyphenator'],
                         help='Syllable slicing algorithm.')
+    parser.add_argument("-f", "--filter", action="store_true", help="Only use relevant data for preparation.")
+    parser.add_argument("-d", "--debug", action="store_true", help="Store raw data to indexed data for debugging.")
 
     return parser.parse_args()
 
@@ -95,8 +163,14 @@ def main():
         thismodule.syllableAnalyser = Hyphenator()
 
     print('building word index...')
-
     analyse_dictionary()
+
+    if args.filter:
+        print('filtering by relation limit...')
+        filter_to_relevant(2, 2)
+
+    print('creating index...')
+    create_index(store_raw=args.debug)
 
     # showTables()
 

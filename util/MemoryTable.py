@@ -21,7 +21,7 @@ class MemoryTable(object):
         return self.__data.iteritems()
 
     def size(self):
-        return self.__index
+        return len(self.__data.keys())
 
     def insert(self, key, value=None):
         if value is None:
@@ -39,6 +39,9 @@ class MemoryTable(object):
 
         self.__data.update({key: value})
         return index
+
+    def remove(self, key):
+        self.__data.pop(key)
 
     def save(self, file_name):
         with open(file_name, 'w') as fp:

@@ -122,7 +122,7 @@ def main():
     syllables = resolve_prediction(Y)
     syllables.sort(key=lambda x: x[2], reverse=True)
 
-    tops = syllables[:3] # get_top(syllables, 0.1)
+    tops = syllables[:3]  # get_top(syllables, 0.1)
 
     print('')
     print('Description:')

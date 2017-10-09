@@ -3,9 +3,7 @@ from datetime import datetime
 import numpy as np
 
 from training.FastMLP import FastMLP
-from training.NeuronalNetwork import NeuralNetwork
 from util.MemoryTable import MemoryTable
-from util.PickleUtil import save_object, load_object
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
@@ -79,9 +77,9 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # params
-    hidden_layers = [500, 500]
-    epochs = 20
-    learning_rate = 0.002
+    hidden_layers = [2000, 2000, 2000]
+    epochs = 1
+    learning_rate = 0.02
 
     # create neuronal network
     nn = FastMLP([X_train.shape[1]] + hidden_layers + [Y_train.shape[1]], epochs=epochs, learning_rate=learning_rate)
