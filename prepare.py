@@ -13,7 +13,7 @@ from collections import defaultdict
 thismodule = sys.modules[__name__]
 thismodule.syllableAnalyser = SyllableSlicer()
 
-DICTIONARY_NAME = 'data/dictionary.csv'
+thismodule.dictionary_name = ''
 
 syllablesTable = MemoryTable()
 tokenTable = MemoryTable()
@@ -23,7 +23,7 @@ tokenAnalyser = TextAnalyser()
 
 
 def analyse_dictionary():
-    with open(DICTIONARY_NAME) as f:
+    with open(thismodule.dictionary_name) as f:
         read = csv.reader(f)
 
         counter = 0
@@ -49,7 +49,7 @@ def analyse_row(row):
     if len(syllables) == 0:
         return
 
-    # print('%s: %s (%s)' % (word, '-'.join(syllables), ', '.join(tokens)))
+    print('%s: %s (%s)' % (word, '-'.join(syllables), ', '.join(tokens)))
 
     dictionaryTable.insert(word, {
         'wordType': wordType,
@@ -132,6 +132,8 @@ def process_arguments():
     parser = argparse.ArgumentParser(description='Prepare dictionary to be trained into neural network.')
     parser.add_argument('--syllable', default='sonority', choices=['sonority', 'pronouncing', 'hyphenator'],
                         help='Syllable slicing algorithm.')
+    parser.add_argument('--language', default='english', choices=['english', 'german'],
+                        help='Which language should be used.')
     parser.add_argument("-f", "--filter", action="store_true", help="Only use relevant data for preparation.")
     parser.add_argument("-d", "--debug", action="store_true", help="Store raw data to indexed data for debugging.")
 
@@ -155,6 +157,8 @@ def save_tables():
 def main():
     args = process_arguments()
 
+    thismodule.dictionary_name = 'data/%s.csv' % args.language
+
     if args.syllable == 'pronouncing':
         thismodule.syllableAnalyser = SyllableAnalyser()
 
@@ -167,7 +171,7 @@ def main():
 
     if args.filter:
         print('filtering by relation limit...')
-        filter_to_relevant(1, 1)
+        filter_to_relevant(2, 2)
 
     print('creating index...')
     create_index(store_raw=args.debug)

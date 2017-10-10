@@ -2,7 +2,7 @@ from keras import Input
 from keras import metrics
 from keras import optimizers
 from keras.models import Sequential, model_from_json
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, LSTM
 from keras.optimizers import RMSprop
 from keras.utils import plot_model
 

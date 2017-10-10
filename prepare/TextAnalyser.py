@@ -13,7 +13,7 @@ class TextAnalyser(object):
         pass
 
     def extract(self, text):
-        self.__rake.extract_keywords_from_text(text)
+        self.__rake.extract_keywords_from_text(text.strip())
         scores = self.__rake.get_ranked_phrases_with_scores()
         keywords = self.unpack_keywords(scores)
         words = filter(lambda x: x[1] not in self.__stopwords and x[1].isalnum(), keywords)
