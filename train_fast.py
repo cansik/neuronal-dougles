@@ -77,7 +77,7 @@ def main():
     print('Test: X %s Y %s' % (X_test.shape, Y_test.shape))
 
     # params
-    hidden_layers = [5000, 5000, 5000, 5000]
+    hidden_layers = [5000, 5000]
     epochs = 1
     learning_rate = 0.2
 
